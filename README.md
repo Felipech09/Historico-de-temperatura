@@ -31,13 +31,24 @@ No terminal, rode:
 
 ## Saída esperada: 
 
+
 === Temperatura Atual ===
+
+
 Cidade: Brasília
+
 Atual: 27°C
+
 Máxima: 30°C
+
 Mínima: 22°C
 
+
 === Previsão da Semana ===
+
+
 2026-01-04 -> Máx: 29°C | Mín: 21°C | Média: 25.0°C
+
 2026-01-05 -> Máx: 30°C | Mín: 22°C | Média: 26.0°C
+
 2026-01-06 -> Máx: 31°C | Mín: 23°C | Média: 27.0°C
