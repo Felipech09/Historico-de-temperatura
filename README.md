@@ -29,7 +29,7 @@ No terminal, rode:
 - python clima.py
 - Digite o nome da cidade (somente cidades do Brasil).
 
-## Saída esperada: 
+## Saída esperada (EXEMPLO): 
 
 
 === Temperatura Atual ===
