@@ -4,7 +4,7 @@ Este é um projeto simples em **Python** utilizando **Programação Orientada a 
 O programa consome a API gratuita do [OpenWeatherMap](https://openweathermap.org/api) e mostra:
 
 - Temperatura **atual**, **máxima** e **mínima** do dia.
-- Previsão da **semana** (3 dias anteriores, hoje e 3 dias seguintes), incluindo máxima, mínima e média.
+- Previsão da **semana** (hoje e os próximos 5 dias), incluindo máxima, mínima e média.
 
 ---
 

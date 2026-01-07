@@ -1,73 +1,99 @@
 import requests
 
 class ClimaCidade:
-  def __init__(self, cidade, api_key):
-    fel.cidade = cidade
-    self.api_key = api_key
-    self.base_url = "http://api.openweathermap.org/data/2.5/"
+    def __init__(self, cidade, api_key):
+        self.cidade = cidade
+        self.api_key = api_key
+        self.base_url = "http://api.openweathermap.org/data/2.5/"
 
-def obter_temperatura_atual(self):
-""" Temperatura atual, mínima e média do dia ficam aqui"""
-  url = f"{self.base_url}weather?q={self.cidade},BR&appid={self.api_key}&units=metric&lang=pt_br"
-  resposta = requests.get(url)
-  dados = resposta.json()
+    def obter_temperatura_atual(self):
+        url = (
+            f"{self.base_url}weather?q={self.cidade},BR"
+            f"&appid={self.api_key}&units=metric&lang=pt_br"
+        )
+        resposta = requests.get(url)
+        dados = resposta.json()
 
-  if resposta.status_code != 200:
-    return f"Erro: {dados.get('message', 'Não foi possível obter dados')}"
+        if resposta.status_code != 200:
+            return {"erro": dados.get("message", "Não foi possível obter dados")}
 
-temp_atual = dados["main"]["temp"]
-temp_max = dados["main"]["temp_max"]
-temp_min = dados["main"]["temp_min"]
-
-return {
-  "cidade": self.cidade,
-  "temperatura_atual": temp_atual,
-  "máxima": temp_max,
-  "mínima": temp_min
+        return {
+    "cidade": self.cidade,
+    "temperatura_atual": round(dados["main"]["temp"]),
+    "maxima": round(dados["main"]["temp_max"]),
+    "minima": round(dados["main"]["temp_min"])
 }
 
-def obter_previsao_semana(self): 
-  """Retorna previsão para 7 dias (3 antes, hoje e 3 depois)""" 
-  url = f"{self.base_url}forecast?q={self.cidade},BR&appid={self.api_key}&units=metric&lang=pt_br" 
-  resposta = requests.get(url) 
-  dados = resposta.json() 
-  
-  if resposta.status_code != 200: 
-    return f"Erro: {dados.get('message', 'Não foi possível obter dados')}" 
-    
-  previsoes = []
+    def obter_previsao_semana(self):
+        """
+        Retorna previsão diária baseada nos dados disponíveis (até 5 dias)
+        """
+        url = (
+            f"{self.base_url}forecast?q={self.cidade},BR"
+            f"&appid={self.api_key}&units=metric&lang=pt_br"
+        )
+        resposta = requests.get(url)
+        dados = resposta.json()
 
-for i in range(0, 7):
-  indice = i * 8
-  dia = dados["list"][indice]
-  data = dia["dt_txt"].split(" ")[0]
-  temp_max = dia["main"]["temp-max"]
-  temp_min = dia["main"]["temp-min"]
-  media = (temp_max + temp_min) / 2
-  previsoes.append({
-    "data": data,
-    "maxima": temp_max,
-    "minima": temp_min,
-    "media": media
-  })
+        if resposta.status_code != 200:
+            return {"erro": dados.get("message", "Não foi possível obter dados")}
 
-return previsoes
+        previsoes = []
+        lista = dados["list"]
+
+        # Cada 8 registros ≈ 1 dia
+        dias_disponiveis = len(lista) // 8
+
+        for i in range(dias_disponiveis):
+            indice = i * 8
+            dia = lista[indice]
+
+            data = dia["dt_txt"].split(" ")[0]
+            temp_max = round(dia["main"]["temp_max"])
+            temp_min = round(dia["main"]["temp_min"])
+            media = round((temp_max + temp_min) / 2)
+
+            previsoes.append({
+                "data": data,
+                "maxima": temp_max,
+                "minima": temp_min,
+                "media": media
+            })
+
+        return previsoes
+
+
+
 
 if __name__ == "__main__":
-  api_key = "950d6b72782852edbfa626099e804275"
-  cidade = input cidade = input("Digite o nome de uma cidade brasileira: ")
-  clima = ClimaCidade(cidade, api_key)
+    api_key = "950d6b72782852edbfa626099e804275"
+    cidade = input("Digite o nome de uma cidade brasileira: ")
 
-# Temperatura atual
-atual = clima.obter_temperatura_atual()
-print("\n=== Temperatura Atual ===")
-print(f"Cidade: {atual['cidade']}")
-print(f"Atual: {atual['temperatura_atual']}°C")
-print(f"Máxima: {atual['maxima']}°C")
-print(f"Mínima: {atual['minima']}°C")
+    clima = ClimaCidade(cidade, api_key)
 
-# previsão da semana
-semana = clima.obter_previsao_semana()
-print("\n=== Previsão da Semana ===")
-for dia in semana:
-    print(f"{dia['data']} -> Máx: {dia['maxima']}°C | Mín: {dia['minima']}°C | Média: {dia['media']:.1f}°C")
+    # Temperatura atual
+    atual = clima.obter_temperatura_atual()
+
+    if "erro" in atual:
+        print("Erro:", atual["erro"])
+    else:
+        print("\n=== Temperatura Atual ===")
+        print(f"Cidade: {atual['cidade']}")
+        print(f"Atual: {atual['temperatura_atual']}°C")
+        print(f"Máxima: {atual['maxima']}°C")
+        print(f"Mínima: {atual['minima']}°C")
+
+    # Previsão da semana
+    semana = clima.obter_previsao_semana()
+
+    if isinstance(semana, dict) and "erro" in semana:
+        print("Erro:", semana["erro"])
+    else:
+        print("\n=== Previsão da Semana ===")
+        for dia in semana:
+            print(
+                f"{dia['data']} -> "
+                f"Máx: {dia['maxima']}°C | "
+                f"Mín: {dia['minima']}°C | "
+                f"Média: {dia['media']:.1f}°C"
+            )
