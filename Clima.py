@@ -66,7 +66,7 @@ class ClimaCidade:
 
 
 if __name__ == "__main__":
-    api_key = "950d6b72782852edbfa626099e804275"
+    api_key = "COLAR-SUA-KEY-AQUI" # para que não ocorra problemas, vou deixar assim e sempre atualize a chave quando for usar
     cidade = input("Digite o nome de uma cidade brasileira: ")
 
     clima = ClimaCidade(cidade, api_key)
